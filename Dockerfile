@@ -24,7 +24,7 @@ RUN set -x \
            --disable-pip-version-check \
                sphinx-autobuild
 
-ADD entrypoint.sh /entrypoint.sh
+ADD ./root /
 
 ENTRYPOINT ["/entrypoint.sh"]
 CMD ["sphinx-autobuild", "--host", "0.0.0.0", "source", "build/html"]
