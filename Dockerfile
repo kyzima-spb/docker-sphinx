@@ -2,6 +2,8 @@ FROM sphinxdoc/sphinx
 
 LABEL maintainer="Kirill Vercetti <office@kyzima-spb.com>"
 
+STOPSIGNAL SIGINT
+
 EXPOSE 8000
 
 ENV DEBIAN_FRONTEND noninteractive
