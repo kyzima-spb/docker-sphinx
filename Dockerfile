@@ -1,8 +1,10 @@
-FROM sphinxdoc/sphinx
+FROM python:3.9-slim
 
 LABEL maintainer="Kirill Vercetti <office@kyzima-spb.com>"
 
 STOPSIGNAL SIGINT
+
+WORKDIR /docs
 
 EXPOSE 8000
 
@@ -18,13 +20,18 @@ RUN set -x \
 RUN apt update
 
 RUN set -x \
-    && apt install -yq --no-install-recommends gosu \
+    && apt install -yq --no-install-recommends \
+        gosu \
+        graphviz \
+        imagemagick \
     && apt-get clean  \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
     && pip install \
            --no-cache-dir \
            --disable-pip-version-check \
-               sphinx-autobuild
+               sphinx-autobuild \
+               Sphinx \
+               Pillow
 
 ADD ./root /
 
