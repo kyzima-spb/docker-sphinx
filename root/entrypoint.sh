@@ -1,17 +1,31 @@
 #!/usr/bin/env bash
 set -e
 
+PACKAGE_DIR='/package'
 LOG_FILE='/var/log/package_install.log'
+
+
+install() {
+    pushd "$PACKAGE_DIR"
+        if [[ -f requirements.txt ]]; then
+            pip install --disable-pip-version-check -r requirements.txt
+        elif [[ -f setup.py ]]; then
+            pip install --disable-pip-version-check -e /package | tee "$LOG_FILE"
+
+            for i in $EXTRA; do
+                echo "Install extra requires $i"
+                pip install --disable-pip-version-check -e "/package[$i]" | tee -a "$LOG_FILE"
+            done
+        else
+            echo "Package not installed."
+        fi
+    popd
+}
 
 
 if [[ ! -f "$LOG_FILE" ]]; then
     echo "Install package"
-    pip install --disable-pip-version-check -e /package | tee "$LOG_FILE"
-
-    for i in $EXTRA; do
-        echo "Install extra requires $i"
-        pip install --disable-pip-version-check -e "/package[$i]" | tee -a "$LOG_FILE"
-    done
+    install
 fi
 
 
