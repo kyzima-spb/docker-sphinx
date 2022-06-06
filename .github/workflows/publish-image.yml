@@ -4,7 +4,6 @@ on:
   push:
     branches: [ master ]
 
-
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -31,8 +30,8 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           push: true
           tags: ${{ secrets.DOCKER_HUB_USERNAME }}/sphinx:latest
-          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/docker-sphinx:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/docker-sphinx:buildcache,mode=max
+          cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/sphinx:buildcache
+          cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/sphinx:buildcache,mode=max
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
