@@ -6,11 +6,11 @@ LOG_FILE='/var/log/package_install.log'
 
 if [[ ! -f "$LOG_FILE" ]]; then
     echo "Install package"
-    pip install -e /package | tee "$LOG_FILE"
+    pip install --disable-pip-version-check -e /package | tee "$LOG_FILE"
 
     for i in $EXTRA; do
         echo "Install extra requires $i"
-        pip install -e "/package[$i]" | tee -a "$LOG_FILE"
+        pip install --disable-pip-version-check -e "/package[$i]" | tee -a "$LOG_FILE"
     done
 fi
 

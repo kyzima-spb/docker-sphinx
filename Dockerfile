@@ -38,4 +38,4 @@ RUN set -x \
 ADD ./root /
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["sphinx-autobuild", "--host", "0.0.0.0", "source", "/build/html"]
+CMD ["sphinx-autobuild", "--host", "0.0.0.0", ".", "/build/html"]
