@@ -4,12 +4,13 @@ LABEL maintainer="Kirill Vercetti <office@kyzima-spb.com>"
 
 STOPSIGNAL SIGINT
 
-WORKDIR /docs
+VOLUME /build
+VOLUME /package
+WORKDIR /package/docs
 
 EXPOSE 8000
 
 ENV DEBIAN_FRONTEND noninteractive
-ENV PYTHONPATH "/python_packages"
 ENV USER_UID 1000
 ENV USER_GID 1000
 
@@ -21,6 +22,7 @@ RUN apt update
 
 RUN set -x \
     && apt install -yq --no-install-recommends \
+        git \
         gosu \
         graphviz \
         imagemagick \
@@ -36,4 +38,4 @@ RUN set -x \
 ADD ./root /
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["sphinx-autobuild", "--host", "0.0.0.0", "source", "build/html"]
+CMD ["sphinx-autobuild", "--host", "0.0.0.0", "source", "/build/html"]
