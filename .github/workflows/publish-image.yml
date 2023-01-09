@@ -51,3 +51,15 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/buildcache:${{ env.IMAGE_NAME }}
           cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/buildcache:${{ env.IMAGE_NAME }},mode=max
+  remove-old-versions:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      -
+        name: Delete old versions of images
+        uses: vlaurin/action-ghcr-prune@main
+        with:
+          token: ${{ secrets.PAT }}
+          user: ${{ github.repository_owner }}
+          container: ${{ env.IMAGE_NAME }}
+          untagged: true
