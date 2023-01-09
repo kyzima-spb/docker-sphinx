@@ -3,7 +3,7 @@ name: Build and publish image to DockerHub
 on:
   push:
     branches:
-      - dev-master
+      - master
 
 env:
   IMAGE_NAME: "sphinx"
