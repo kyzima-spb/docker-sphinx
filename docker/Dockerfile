@@ -1,29 +1,29 @@
-FROM python:3.9-slim
+ARG PYVERSION=3.11
+ARG RELEASE=slim-bookworm
+
+FROM python:$PYVERSION-$RELEASE
 
 LABEL maintainer="Kirill Vercetti <office@kyzima-spb.com>"
 
 STOPSIGNAL SIGINT
 
-VOLUME /build
-VOLUME /package
-WORKDIR /package/docs
+WORKDIR /package
 
 EXPOSE 8000
 
-ENV DEBIAN_FRONTEND noninteractive
-ENV USER_UID 1000
-ENV USER_GID 1000
+ENV DEBIAN_FRONTEND=noninteractive \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    HOME=/tmp
 
-RUN set -x \
-    && groupadd -g 1000 user \
-    && useradd -u 1000 -g user -s /bin/bash -m user
+RUN set -ex \
+    && useradd -s /usr/sbin/nologin user \
+    && chown user /package
 
-RUN apt update
-
-RUN set -x \
+RUN set -ex \
+    && apt update \
     && apt install -yq --no-install-recommends \
         git \
-        gosu \
         graphviz \
         imagemagick \
     && apt-get clean  \
@@ -35,7 +35,9 @@ RUN set -x \
                Sphinx \
                Pillow
 
-ADD ./root /
+COPY ./root /
+
+USER user
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["sphinx-autobuild", "--host", "0.0.0.0", ".", "/build/html"]
+CMD ["serve"]

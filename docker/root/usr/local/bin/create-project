@@ -1,0 +1,48 @@
+#!/usr/bin/env python3
+
+from contextlib import suppress
+import json
+import os
+import sys
+
+from sphinx.cmd.quickstart import get_parser, generate
+
+
+def arguments_from_env(prefix: str = 'SPHINX_'):
+    d = {
+        **vars(get_parser().parse_args()),
+        'sep': False,
+        'extensions': [],
+        'makefile': False,
+        'batchfile': False,
+        'variables': [],
+    }
+    prefix_len = len(prefix)
+
+    for key in filter(lambda k: k.startswith(prefix), os.environ):
+        value = os.environ[key]
+
+        with suppress(Exception):
+            value = json.loads(value)
+        
+        key = key[prefix_len:].lower()
+        
+        if key.startswith('ext_') and value:
+            key = key[len('ext_'):]
+            d['extensions'].append('sphinx.ext.%s' % key)
+        elif key.startswith('var_'):
+            key = key[len('var_'):]
+            d['variables'].append('%s=%s' % (key, value))
+        else:
+            d[key] = value
+    
+    if not d['project'] or not d['author']:
+        raise SystemExit(
+            '{0}PROJECT or {0}AUTHOR required.'.format(prefix)
+        )
+
+    return d
+
+
+d = arguments_from_env()
+generate(d, overwrite=False, templatedir=d.get('templatedir'))

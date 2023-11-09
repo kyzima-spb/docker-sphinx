@@ -1,0 +1,10 @@
+#!/usr/bin/env sh
+set -e
+
+SPHINX_PATH=${SPHINX_PATH:-"$(pwd)/docs"}
+
+conffile="$(find "$SPHINX_PATH" -type f -name conf.py)"
+sourcedir="$(test -n "$conffile" && dirname "$conffile" || echo '.')"
+outdir='/tmp/build/html'
+
+sphinx-autobuild --host 0.0.0.0 "$sourcedir" "$outdir"
