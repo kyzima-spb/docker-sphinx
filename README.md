@@ -4,7 +4,8 @@
 
 - [Creating a new project](#creating-a-new-project)
 - [Existing project](#existing-project)
-- [Installing additional dependencies](#installing_additional_dependencies)
+- [Installing additional dependencies](#installing-additional-dependencies)
+- [Docker Compose](#docker-compose)
 
 ## Creating a new project
 
@@ -59,7 +60,7 @@ the package with all dependencies will be automatically installed.
 To install extra dependencies,
 set the `EXTRA` environment variable with the names separated by spaces.
 
-## docker-compose
+## Docker Compose
 
 ```yaml
 version: "3.9"
