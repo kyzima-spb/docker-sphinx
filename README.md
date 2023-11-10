@@ -1,69 +1,79 @@
-# Getting Started
+# Table of contents
+
+`kyzimaspb/sphinx` - the image helps in developing documentation using Sphinx.
+
+- [Creating a new project](#creating-a-new-project)
+- [Existing project](#existing-project)
+- [Installing additional dependencies](#installing_additional_dependencies)
+
+## Creating a new project
 
 Sphinx comes with a script called **sphinx-quickstart**
-that sets up a source directory and creates a default conf.py
-with the most useful configuration values from a few questions it asks you.
-To use this, run:
+that sets up a source directory and creates a default `conf.py`
+with the most useful configuration values.
 
-```bash
-docker run --rm -ti -v $(pwd):/package kyzimaspb/sphinx sphinx-quickstart
-```
+sphinx-quickstart’s command line options can be set
+with environment variables using the format `SPHINX_<UPPER_LONG_NAME>`.
+Dashes (`-`) have to be replaced with underscores (`_`).
 
 Separating source and build files does not make sense, the image does it automatically.
 
-## Run HTTP Server
+Environment variable values are interpreted as JSON.
+The values of the flag arguments must be specified as `true`/`false`.
 
-Run the container named `sphinx_1` in daemon mode and mount the specified volumes
-to the specified directories of the host machine:
+If an empty docs directory does not exist in the project, it is created.
+Use `SPHINX_PATH` to specify a name other than docs,
+for example `SPHINX_PATH=/package/tutorial`.
+
+Example of running a container:
 
 ```bash
-docker run -d --name sphinx_1 \
+docker run --rm -ti --name sphinx_1 \
+    -p 8000:8000 \
+    -v $(pwd):/package \
+    -e SPHINX_PROJECT=demo \
+    -e SPHINX_AUTHOR='Kirill Vercetti' \
+    -e SPHINX_EXT_AUTODOC=true \
+    kyzimaspb/sphinx
+```
+
+## Existing project
+
+If the project already contains documentation for Sphinx,
+then just mount the project directory in `/package`,
+all environment variables except `SPHINX_PATH` will be ignored:
+
+```bash
+docker run --rm -ti --name sphinx_1 \
     -p 8000:8000 \
     -v $(pwd):/package \
     kyzimaspb/sphinx
 ```
 
-By default, the public TCP port of the HTTP server `8000`.
+## Installing additional dependencies
 
-The configuration file must be in the current working directory, by default `/packages/docs`.
-If you use a different path, you must explicitly specify the current working directory
-in the `-w` argument of the `run` command.
+If `requirements.txt`, `pyproject.toml` or `setup.py` files
+are found in the project directory,
+the package with all dependencies will be automatically installed.
 
-```bash
-docker run -d --name sphinx_1 \
-    -p 8000:8000 \
-    -v $(pwd):/package \
-    -w /package/docs/source \
-    kyzimaspb/sphinx
-```
-
-## Volumes
-
-* `/package` - directory of the package for which the documentation is being written;
-* `/build` - directory for generated files.
-
-## Environment Variables
-
-* `USER_UID` - user ID from which the HTTP server is running (Defaults to `1000`);
-* `USER_GID` - group ID for the user from which the HTTP server is running (Defaults to `1000`);
-* `EXTRA` - a comma-separated list of additional dependencies.
+To install extra dependencies,
+set the `EXTRA` environment variable with the names separated by spaces.
 
 ## docker-compose
 
-File example:
-
 ```yaml
-version: "3.7"
+version: "3.9"
 
 services:
   sphinx:
-    image: kyzimaspb/sphinx
-    environment:
-      EXTRA: extras_1 extras_2 extras_3
-    working_dir: /package/docs/source  # if need change
-    restart: unless-stopped
+    image: sphinx
     ports:
-      - 8000:8000
+      - "8000:8000"
+    environment:
+      SPHINX_PROJECT: flask-uploader
+      SPHINX_AUTHOR: "Kirill Vercetti"
+      SPHINX_EXT_AUTODOC: true
+      EXTRA: "pymongo aws"
     volumes:
-      - .:/package
+      - ./package:/package
 ```
