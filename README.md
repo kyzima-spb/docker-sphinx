@@ -67,7 +67,7 @@ version: "3.9"
 
 services:
   sphinx:
-    image: sphinx
+    image: kyzimaspb/sphinx
     ports:
       - "8000:8000"
     environment:
