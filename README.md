@@ -5,6 +5,7 @@
 - [Creating a new project](#creating-a-new-project)
 - [Existing project](#existing-project)
 - [Installing additional dependencies](#installing-additional-dependencies)
+- [Change HTML theme](#change-html-theme)
 - [Docker Compose](#docker-compose)
 
 ## Creating a new project
@@ -59,6 +60,21 @@ the package with all dependencies will be automatically installed.
 
 To install extra dependencies,
 set the `EXTRA` environment variable with the names separated by spaces.
+
+## Change HTML theme
+
+You can install any [available theme](https://sphinx-themes.readthedocs.io/en/latest/)
+by specifying its programmatic name in the `SPHINX_HTML_THEME` environment variable,
+for example:
+
+```bash
+docker run --rm -ti --name sphinx_1 \
+    -p 8000:8000 \
+    -v $(pwd):/package \
+    -e SPHINX_HTML_THEME=sphinx_rtd_theme \
+    kyzimaspb/sphinx
+```
+
 
 ## Docker Compose
 

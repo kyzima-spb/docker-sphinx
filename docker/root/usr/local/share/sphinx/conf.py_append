@@ -1,0 +1,3 @@
+{% if 'sphinx.ext.autosectionlabel' in extensions  %}
+autosectionlabel_prefix_document = True
+{% endif %}
