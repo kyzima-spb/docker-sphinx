@@ -28,7 +28,11 @@ EXPOSE 8000
 ENV DEBIAN_FRONTEND=noninteractive \
     PIP_NO_CACHE_DIR=1 \
     PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    HOME=/tmp
+    HOME=/tmp \
+    SPHINX_HTML_THEME=alabaster \
+    SPHINX_SEP=false \
+    SPHINX_MAKEFILE=false \
+    SPHINX_BATCHFILE=false
 
 WORKDIR /package
 
@@ -59,6 +63,12 @@ RUN set -ex \
    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* /wheels
 
 COPY ./root /
+
+RUN set -ex \
+    && packageDir="$(python -c 'from sphinx import package_dir; print(package_dir)')" \
+    && templatesDir="$packageDir/templates/quickstart" \
+    && sed -ri 's/(html_theme = ).+/\1{{ html_theme | repr }}/' "$templatesDir/conf.py_t" \
+    && cat /usr/local/share/sphinx/conf.py_append >> "$templatesDir/conf.py_t"
 
 USER user
 

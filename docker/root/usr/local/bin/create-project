@@ -11,10 +11,7 @@ from sphinx.cmd.quickstart import get_parser, generate
 def arguments_from_env(prefix: str = 'SPHINX_'):
     d = {
         **vars(get_parser().parse_args()),
-        'sep': False,
         'extensions': [],
-        'makefile': False,
-        'batchfile': False,
         'variables': [],
     }
     prefix_len = len(prefix)

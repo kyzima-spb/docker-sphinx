@@ -8,6 +8,12 @@ SPHINX_PATH=${SPHINX_PATH:-"$packageDir/docs"}
 
 find "$SPHINX_PATH" -maxdepth 0 -empty | xargs -r -n1 create-project
 
+if [[ -n "$SPHINX_HTML_THEME" ]]
+then
+    themePackage=${SPHINX_HTML_THEME/_/-}
+    test -z "$(pip freeze | grep -F "$themePackage")" && pip install "$themePackage"
+fi
+
 if [[ -z "$(pip freeze | grep -F "-e $packageDir")" ]]
 then
     if [[ -f requirements.txt ]]
