@@ -49,12 +49,3 @@ jobs:
           docker-username: ${{ secrets.DOCKER_HUB_USERNAME }}
           docker-password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-      
-      # -
-      #   name: Build and push
-      #   uses: docker/build-push-action@v5
-      #   env:
-      #     IMAGE_VERSION: ${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-      #   with:
-      #     cache-from: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/buildcache:${{ env.IMAGE_NAME }}-${{ env.IMAGE_VERSION }}
-      #     cache-to: type=registry,ref=${{ secrets.DOCKER_HUB_USERNAME }}/buildcache:${{ env.IMAGE_NAME }}-${{ env.IMAGE_VERSION }},mode=max
