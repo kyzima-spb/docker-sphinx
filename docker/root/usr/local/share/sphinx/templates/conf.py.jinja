@@ -1,0 +1,7 @@
+{%- include '/usr/local/share/sphinx/templates/conf.base.jinja' -%}
+
+{%- if 'sphinx.ext.autosectionlabel' in extensions %}
+# -- Allow reference sections using its title
+# https://www.sphinx-doc.org/en/master/usage/extensions/autosectionlabel.html
+autosectionlabel_prefix_document = True
+{% endif %}
