@@ -11,7 +11,7 @@ cmd="${1}"
 # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=874264
 if [ -z "$cmd" ] || [ "${cmd#-}" != "$cmd" ] || [ -z "$(command -v "$cmd")" ] || { [ -f "$cmd" ] && ! [ -x "$cmd" ]; }
 then
-    set -- serve "$@"
+    set -- serve --project-dir ./docs "$@"
 fi
 
 exec "$@"
