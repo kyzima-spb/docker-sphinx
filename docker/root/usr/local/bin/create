@@ -1,0 +1,49 @@
+#!/usr/bin/env bash
+
+set -eo pipefail
+
+
+usage() {
+  cat 1>&2 <<-ENDOFUSAGE
+	usage: $(basename "$0") [OPTIONS] <PROJECT_DIR>
+	$(sphinx-quickstart --help | grep -v ^usage)
+	
+	Additional options:
+	  --theme PACKAGENAME   python package name for Sphinx theme
+	ENDOFUSAGE
+}
+
+
+sphinxArgs=(
+  -t /usr/local/share/sphinx/templates
+  --no-sep
+  --no-makefile
+  --no-batchfile
+)
+theme=''
+
+while [[ "$#" -gt 0 ]]; do
+  case $1 in
+    --theme)
+      theme="$2"
+      shift 2
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      sphinxArgs+=("$1")
+      shift 1
+      ;;
+  esac
+done
+
+
+sphinx-quickstart "${sphinxArgs[@]}"
+
+if [[ -n "$theme" ]]; then
+  conffile="$(find . -type f -name conf.py)"
+  sed -ri "s/(html_theme = ).+/\1'${theme//-/_}'/" "$conffile"
+  echo -e "\e[1;91mDon't forget to install the theme package:\e[0m\n$ pip install $theme\n"
+fi

@@ -12,10 +12,7 @@ EXPOSE 8000
 WORKDIR /package
 
 ENV DEBIAN_FRONTEND=noninteractive \
-    SPHINX_HTML_THEME=alabaster \
-    SPHINX_SEP=false \
-    SPHINX_MAKEFILE=false \
-    SPHINX_BATCHFILE=false
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 ARG TARGETARCH
 
@@ -63,4 +60,4 @@ COPY ./ /
 USER user
 
 ENTRYPOINT ["/entrypoint.sh"]
-CMD ["serve"]
+CMD ["serve", "--project-dir", "./docs"]

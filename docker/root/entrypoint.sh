@@ -1,32 +1,17 @@
 #!/usr/bin/env bash
-set -e
 
-packageDir="$(pwd)"
-SPHINX_PATH=${SPHINX_PATH:-"$packageDir/docs"}
+set -eo pipefail
 
-[[ ! -d "$SPHINX_PATH" ]] && mkdir -p "$SPHINX_PATH"
+export HOME=/tmp
 
-find "$SPHINX_PATH" -maxdepth 0 -empty | xargs -r -n1 create-project
+cmd="${1}"
 
-if [[ -n "$SPHINX_HTML_THEME" ]]
+# Run command with webone if the first argument contains a "-" or is not a system command.
+# The last part inside the "{}" is a workaround for the following bug in ash/dash:
+# https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=874264
+if [ -z "$cmd" ] || [ "${cmd#-}" != "$cmd" ] || [ -z "$(command -v "$cmd")" ] || { [ -f "$cmd" ] && ! [ -x "$cmd" ]; }
 then
-    themePackage=${SPHINX_HTML_THEME/_/-}
-    test -z "$(pip freeze | grep -F "$themePackage")" && pip install "$themePackage"
-fi
-
-if [[ -z "$(pip freeze | grep -F "-e $packageDir")" ]]
-then
-    if [[ -f requirements.txt ]]
-    then
-        pip install -r requirements.txt
-    elif [[ -f setup.py ]] || [[ -f pyproject.toml ]]
-    then
-        pip install -e .
-
-        for i in $EXTRA; do
-            pip install --user -e ".[$i]"
-        done
-    fi
+    set -- serve "$@"
 fi
 
 exec "$@"
